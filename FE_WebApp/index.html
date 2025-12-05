@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3-Tier Frontend - Tuyển Sinh</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+        .container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        #result { margin-top: 20px; padding: 15px; background-color: #f4f4f4; border: 1px solid #ddd; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ứng Dụng Tuyển Sinh 3-Tier (FE)</h2>
+    <p>Web Server: Nginx</p>
+    <button onclick="getStudents()">Lấy Danh Sách Sinh Viên (Gọi API)</button>
+    <div id="result">Kết quả từ Backend/DB sẽ hiển thị ở đây.</div>
+</div>
+
+<script>
+async function getStudents() {
+    document.getElementById('result').innerHTML = "Đang gọi API Backend...";
+    try {
+        // API này sẽ gọi đến Nginx Proxy, Nginx sẽ chuyển tiếp đến Private IP của Backend
+        const response = await fetch('/api/students'); 
+        const data = await response.json();
+
+        let output = '<h3>Dữ Liệu Nhận Được:</h3>';
+        if (data.length > 0) {
+            output += '<ul>';
+            data.forEach(student => {
+                output += `<li>ID: ${student.id}, Tên: ${student.name}</li>`;
+            });
+            output += '</ul>';
+        } else {
+            output += '<p>Không tìm thấy dữ liệu sinh viên. (Kiểm tra kết nối BE -> DB)</p>';
+        }
+
+        document.getElementById('result').innerHTML = output;
+    } catch (error) {
+        document.getElementById('result').innerHTML = `<h3>Lỗi Kết Nối:</h3> <p>Kiểm tra cấu hình Nginx Proxy hoặc Backend API: ${error.message}</p>`;
+        console.error('Error fetching data:', error);
+    }
+}
+</script>
+
+</body>
+</html>
