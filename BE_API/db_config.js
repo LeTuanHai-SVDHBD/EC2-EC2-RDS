@@ -7,3 +7,4 @@ module.exports = {
     database: 'tuyensinhdb', // Tên Database
     port: 3306
 };
+
